@@ -8,6 +8,7 @@ import { CLIENT_ID, COGNITO_DOMAIN, LOGOUT_URL } from "../constants";
 import HomeHeader from "../components/layout/homeHeader";
 import { FloatingAddButton } from "../components/ui/floatingAddButton";
 import TaskLabel from "../components/ui/taskLabel";
+import { TaskItem } from "../components/ui/TaskItem";
 
 
 const sliderConfig: Settings = {
@@ -70,7 +71,11 @@ const Home = (): JSX.Element => {
         )
     }
 
-    const onPressEdit = () => {
+    const onPressDetail= () => {
+
+    }
+
+    const onPressDelete = () => {
 
     }
 
@@ -91,7 +96,15 @@ const Home = (): JSX.Element => {
                 <Slider {...sliderConfig} ref={sliderRef}>
 
                     <div>
-                        <TaskLabel label="Page 1" />
+                        <TaskItem 
+                            title="Super titulo"
+                            description="fjdklas;jfkadsl;  jfkdla; fjdaskl; f jflajf dsakl; jfkdlsa; fjdkal;  jfkdlsa;f sadkl;"
+                            onDelete={onPressDelete}
+                            onPressDetail={onPressDetail}
+                            labels={['lable', 'fda' , 'hola']}
+                            id="23"
+                        
+                        />
                     </div>
                     <div>
                         <TaskLabel label="Page 2" />

@@ -6,16 +6,16 @@ interface TaskLabelProps {
 }
 
 const COLOR_PALETTE: string[] = [
-    '#00A388', 
-    '#2979FF', 
-    '#8E24AA', 
-    '#D81B60', 
-    '#004D40', 
-    '#5E35B1', 
-    '#FF7043', 
-    '#455A64', 
-    '#388E3C', 
-    '#C0CA33', 
+    '#FF8C00', // Naranja Oscuro
+    '#CC5500', // Naranja Quemado
+    '#8B4513', // Marrón Silla
+    '#B8860B', // Oro Oscuro
+    '#4E342E', // Marrón Espresso
+    '#C49B00', // Mostaza Profundo
+    '#B7410E', // Óxido
+    '#FF9900', // Naranja Primario
+    '#9B7653', // Café con Leche
+    '#A29B00', // Amarillo Oliva
 ];
 
 const getRandomColorFromPalette = (): string => {
@@ -28,7 +28,6 @@ const TaskLabel = (props: TaskLabelProps): JSX.Element => {
     const { label } = props;
 
     const backgroundColor = useMemo(() => getRandomColorFromPalette(), []);
-
 
     return ( 
         <Box
