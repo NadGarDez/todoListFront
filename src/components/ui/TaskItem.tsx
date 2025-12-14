@@ -5,15 +5,16 @@ import TaskLabel from "./taskLabel";
 import type { TaskInterface } from "../../types";
 
 type TaskItemProps = {
-    
-    onDelete: (id: string) => void;
-    onPressDetail: (id: string) => void;
+    onDelete: (item: TaskInterface) => void;
+    onPressDetail: (item: TaskInterface) => void;
 } & TaskInterface
 
 const PRIMARY_ORANGE = "#FF9900";
 
 export const TaskItem = (props: TaskItemProps): JSX.Element => {
-    const { id, title, labels, description, onDelete, onPressDetail } = props;
+    const {  onDelete, onPressDetail, ...item } = props;
+
+    const { title, labels, description} = item;
 
     // Estado para controlar el menú de opciones (tres puntos)
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -28,12 +29,12 @@ export const TaskItem = (props: TaskItemProps): JSX.Element => {
     };
 
     const handleDetail = () => {
-        onPressDetail(id);
+        onPressDetail(item);
         handleCloseMenu();
     };
 
     const handleDelete = () => {
-        onDelete(id);
+        onDelete(item);
         handleCloseMenu();
     };
 
@@ -64,7 +65,7 @@ export const TaskItem = (props: TaskItemProps): JSX.Element => {
                 <Typography
                     variant="subtitle1"
                     component="h3"
-                    onClick={() => onPressDetail(id)} 
+                    onClick={() => onPressDetail(item)} 
                     sx={{
                         fontWeight: 600,
                         flexGrow: 1, 

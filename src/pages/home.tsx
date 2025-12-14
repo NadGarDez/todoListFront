@@ -23,7 +23,7 @@ const sliderConfig: Settings = {
 
 
 
-interface modalState { 
+interface modalState {
     visible: boolean,
     contentName: 'signOut' | 'delete'
 }
@@ -153,9 +153,16 @@ const MOCK_TASKS: TaskInterface[] = [
     },
 ];
 
-
+const defaultTaskData:TaskInterface = {
+    id:'',
+    title: '',
+    labels: [],
+    description: ''
+}
 
 const Home = (): JSX.Element => {
+
+    const [activeItem, setActiveItem] = useState<TaskInterface>(defaultTaskData);
 
     const signOut = () => {
         window.location.href = `${COGNITO_DOMAIN}/logout?client_id=${CLIENT_ID}}&logout_uri=${encodeURIComponent(LOGOUT_URL)}`;
@@ -184,6 +191,7 @@ const Home = (): JSX.Element => {
 
     const back = () => {
         sliderRef.current?.slickPrev();
+        setActiveItem(defaultTaskData)
     }
 
     const next = () => {
@@ -200,12 +208,12 @@ const Home = (): JSX.Element => {
         )
     }
 
-    const onPressDetail= () => {
-
+    const onPressDetail = (item:TaskInterface) => {
+        setActiveItem(item);
     }
 
-    const onPressDelete = () => {
-
+    const onPressDelete = (item:TaskInterface) => {
+        setActiveItem(item); 
     }
 
     const onPressAdd = () => {
@@ -213,34 +221,29 @@ const Home = (): JSX.Element => {
     }
 
 
+    const finaleDelete = () => {
+        // async operation
+         setActiveItem(defaultTaskData)
+    }
+
+
     return (
 
         <BackgroundLayout >
             <MobileFirstContainer>
-                <HomeHeader 
-                
+                <HomeHeader
+
                     onPressLogOut={onPressLogOut}
                 />
 
                 <Slider {...sliderConfig} ref={sliderRef}>
 
                     <div>
-                        {/* <TaskItem 
-                            title="Super titulo"
-                            description="fjdklas;jfkadsl;  jfkdla; fjdaskl; f jflajf dsakl; jfkdlsa; fjdkal;  jfkdlsa;f sadkl;"
-                            onDelete={onPressDelete}
+                        <TaskList
+                            tasks={MOCK_TASKS}
+                            onPressDelete={onPressDelete}
                             onPressDetail={onPressDetail}
-                            labels={['lable', 'fda' , 'hola']}
-                            id="23"
-                        
-                        /> */}
-
-                            <TaskList 
-                                tasks={MOCK_TASKS}
-                                onDelete={onPressDelete}
-                                onPressDetail={onPressDetail}
-                            
-                            />
+                        />
 
                     </div>
                     <div>
@@ -249,8 +252,8 @@ const Home = (): JSX.Element => {
 
                 </Slider>
 
-                <FloatingAddButton 
-                
+                <FloatingAddButton
+
                     onPressAdd={onPressAdd}
                 />
 
@@ -270,10 +273,16 @@ const Home = (): JSX.Element => {
                                 onAction={signOut}
                                 actionLabel="Cerrar Sesión"
                             />
-                        ) : null
+                        ) : (
+                            <StandardModalContent 
+                                title={`¿Estás seguro de que quieres eliminar el elemento ${activeItem.id}?`}
+                                subtitle="Los datos eliminados son irrecuperables."
+                                onCancel={toggleVisibility}
+                                onAction={finaleDelete}
+                                actionLabel="Cerrar Sesión"
+                            />
+                        )
                     }
-
-
                 </DefaultModal>
             </MobileFirstContainer>
         </BackgroundLayout>

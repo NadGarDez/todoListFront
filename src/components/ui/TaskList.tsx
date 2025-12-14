@@ -1,29 +1,17 @@
 import React, { type JSX } from "react";
 import { Box, Typography } from "@mui/material";
 import { TaskItem } from "./TaskItem"; 
+import type { TaskInterface } from "../../types";
 
-interface Task {
-    id: string;
-    title: string; 
-    labels: string[];
-    description: string; 
-}
 
 interface TaskListProps {
-    tasks: Task[];
+    tasks: TaskInterface[];
+    onPressDetail: (item: TaskInterface) => void
+    onPressDelete: (item: TaskInterface) => void
 }
 
-
-const handleDeleteTask = (id: string) => {
-    console.log(`[TaskList] - Simulación: Eliminando tarea con ID: ${id}`);
-};
-
-const handlePressDetail = (id: string) => {
-    console.log(`[TaskList] - Simulación: Viendo detalles de tarea con ID: ${id}`);
-};
-
 const TaskList = (props: TaskListProps): JSX.Element => {
-    const { tasks } = props;
+    const { tasks, onPressDelete, onPressDetail } = props;
 
     if (tasks.length === 0) {
         return (
@@ -51,8 +39,8 @@ const TaskList = (props: TaskListProps): JSX.Element => {
                     title={task.title}
                     labels={task.labels}
                     description={task.description}
-                    onDelete={handleDeleteTask}
-                    onPressDetail={handlePressDetail}
+                    onDelete={onPressDelete}
+                    onPressDetail={onPressDetail}
                 />
             ))}
         </Box>
