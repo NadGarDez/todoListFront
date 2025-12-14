@@ -10,6 +10,7 @@ import { FloatingAddButton } from "../components/ui/floatingAddButton";
 import TaskLabel from "../components/ui/taskLabel";
 import TaskList from "../components/ui/TaskList";
 import type { TaskInterface } from "../types";
+import { TaskForm } from "../components/ui/TaskForm";
 
 
 const sliderConfig: Settings = {
@@ -224,7 +225,12 @@ const Home = (): JSX.Element => {
 
     const finaleDelete = () => {
         // async operation
-         setActiveItem(defaultTaskData)
+         setActiveItem(defaultTaskData);
+    }
+
+
+    const createOrUpdate = (data:TaskInterface) => {
+        
     }
 
 
@@ -248,7 +254,11 @@ const Home = (): JSX.Element => {
 
                     </div>
                     <div>
-                        <TaskLabel label="Page 2" />
+                        <TaskForm 
+                            task={activeItem}
+                            onSubmit={createOrUpdate}
+                            back={back}
+                        />
                     </div>
 
                 </Slider>
