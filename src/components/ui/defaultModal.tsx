@@ -19,34 +19,33 @@ export const DefaultModal = (props: DefaultModalProps): JSX.Element => {
     };
 
     return (
-        <Box 
+        <Box
             sx={{
                 position: 'absolute',
                 top: 0,
                 left: 0,
                 width: '100%',
                 height: '100%',
-                overflow: 'hidden', 
-                
-                pointerEvents: visible ? 'auto' : 'none', 
+                overflow: 'hidden',
+
+                pointerEvents: visible ? 'auto' : 'none',
             }}
         >
-            {/* 1. Backdrop */}
-                <Box
-                    onClick={handleClose}
-                    sx={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        width: '100%',
-                        height: '100%',
-                        zIndex: 9,
-                        backgroundColor: 'rgba(0, 0, 0, 0.4)',
-                        opacity: visible ? 1 : 0,
-                        transition: 'opacity 300ms ease-in-out',
-                    }}
-                />
-            
+            <Box
+                onClick={handleClose}
+                sx={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    zIndex: 9,
+                    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+                    opacity: visible ? 1 : 0,
+                    transition: 'opacity 300ms ease-in-out',
+                }}
+            />
+
 
             <Box
                 sx={{
