@@ -6,6 +6,7 @@ import Slider, { type Settings } from 'react-slick';
 import StandardModalContent from "../components/ui/standarModalContent";
 import { CLIENT_ID, COGNITO_DOMAIN, LOGOUT_URL } from "../constants";
 import HomeHeader from "../components/layout/homeHeader";
+import { FloatingAddButton } from "../components/ui/floatingAddButton";
 
 
 const sliderConfig: Settings = {
@@ -72,7 +73,7 @@ const Home = (): JSX.Element => {
 
     }
 
-    const onPressCreate = () => {
+    const onPressAdd = () => {
 
     }
 
@@ -96,6 +97,11 @@ const Home = (): JSX.Element => {
                     </div>
 
                 </Slider>
+
+                <FloatingAddButton 
+                
+                    onPressAdd={onPressAdd}
+                />
 
                 {/* modal aquí tendremos un selector de contenido dinámico*/}
 
