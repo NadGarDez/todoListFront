@@ -1,11 +1,11 @@
-import React, { type JSX } from "react";
+import React, { useState, type JSX } from "react";
 import BackgroundLayout from "../components/layout/backgroundLaout";
 import MobileFirstContainer from "../components/layout/mobileFirstContainer";
+import DefaultModal from "../components/ui/defaultModal";
 
 const Home = (): JSX.Element => {
 
     const signOut = () => {
-        // await auth.removeUser();
         const clientId = "4g18cqrugc9kv0tdev8vhsgieh";
         const logoutUri = "http://localhost:5173/logout";
         const cognitoDomain = "https://us-east-2tr2vhtad9.auth.us-east-2.amazoncognito.com";
@@ -13,22 +13,25 @@ const Home = (): JSX.Element => {
 
     };
 
+    const [visible, setVisible] = useState<boolean>(false);
+
+    const toggleVisibility = () => setVisible(!visible);
+    const onChangeVisibility = (newVisibility:boolean) => {
+        setVisible(newVisibility)
+    }
+
     return (
-        // <main style={{ maxWidth: 720, margin: "4rem auto", padding: "0 1rem", textAlign: "center" }}>
-        //     <h1>Todo List</h1>
-        //     <p>A minimal home page for your React app.</p>
-        //     <p>
-        //         <a href="/todos">View Todos</a>
-        //         {" • "}
-        //         <a href="/create">Create Todo</a>
-        //     </p>
-        //     <button onClick={signOut}>
-        //         LogOut
-        //     </button>
-        // </main>
+        
         <BackgroundLayout >
             <MobileFirstContainer>
-                <p>Hols</p>
+               <button onClick={toggleVisibility}>toggle</button>
+               <DefaultModal 
+                visible={visible}
+                relativeHeight="70%"
+                onChangeVisibility={onChangeVisibility}
+               >
+                    <p>super modal</p>
+               </DefaultModal>
             </MobileFirstContainer>
         </BackgroundLayout>
     );

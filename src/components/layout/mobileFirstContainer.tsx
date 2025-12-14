@@ -24,7 +24,7 @@ const MobileFirstContainer = ({ children }: MobileFirstContainerProps): JSX.Elem
 
                 borderRadius: 4, 
                 p: 0, 
-                
+                overflow:'hidden',
                 display: 'flex',
                 flexDirection: 'column',
                 
@@ -46,16 +46,14 @@ const MobileFirstContainer = ({ children }: MobileFirstContainerProps): JSX.Elem
 
             <Box
                 sx={{
-                    position: 'sticky',
+                    position: 'absolute',
                     bottom: 0,
-                    
+                    zIndex:20,
                     width: '100%',
                     height: '24px', 
-                    
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'flex-start', 
-                    
                     backgroundColor: 'transparent', 
                     borderBottomLeftRadius: 4,
                     borderBottomRightRadius: 4,
