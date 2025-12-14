@@ -169,7 +169,6 @@ const Home = (): JSX.Element => {
 
     };
 
-
     const sliderRef = useRef<Slider>(null);
 
     const [modalState, setModalStatus] = useState<modalState>({
@@ -210,6 +209,7 @@ const Home = (): JSX.Element => {
 
     const onPressDetail = (item:TaskInterface) => {
         setActiveItem(item);
+        next()
     }
 
     const onPressDelete = (item:TaskInterface) => {
@@ -217,7 +217,8 @@ const Home = (): JSX.Element => {
     }
 
     const onPressAdd = () => {
-
+        setActiveItem(defaultTaskData)
+        next()
     }
 
 
