@@ -1,6 +1,6 @@
 import React, { type JSX } from "react";
 import { Box, Typography } from "@mui/material";
-import { TaskItem } from "./TaskItem"; // Asegúrate de que la ruta sea correcta
+import { TaskItem } from "./TaskItem"; 
 
 interface Task {
     id: string;
@@ -14,7 +14,6 @@ interface TaskListProps {
 }
 
 
-// --- FUNCIONES MOCKEADAS (para que TaskItem funcione) ---
 const handleDeleteTask = (id: string) => {
     console.log(`[TaskList] - Simulación: Eliminando tarea con ID: ${id}`);
 };
@@ -22,8 +21,6 @@ const handleDeleteTask = (id: string) => {
 const handlePressDetail = (id: string) => {
     console.log(`[TaskList] - Simulación: Viendo detalles de tarea con ID: ${id}`);
 };
-// --------------------------------------------------------
-
 
 const TaskList = (props: TaskListProps): JSX.Element => {
     const { tasks } = props;

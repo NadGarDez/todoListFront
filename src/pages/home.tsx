@@ -8,8 +8,8 @@ import { CLIENT_ID, COGNITO_DOMAIN, LOGOUT_URL } from "../constants";
 import HomeHeader from "../components/layout/homeHeader";
 import { FloatingAddButton } from "../components/ui/floatingAddButton";
 import TaskLabel from "../components/ui/taskLabel";
-import { TaskItem } from "../components/ui/TaskItem";
 import TaskList from "../components/ui/TaskList";
+import type { TaskInterface } from "../types";
 
 
 const sliderConfig: Settings = {
@@ -22,15 +22,6 @@ const sliderConfig: Settings = {
 };
 
 
-interface Task {
-    id: string;
-    title: string; 
-    labels: string[];
-    description: string; 
-    
-}
-
-
 
 interface modalState { 
     visible: boolean,
@@ -39,7 +30,7 @@ interface modalState {
 
 
 
-const MOCK_TASKS: Task[] = [
+const MOCK_TASKS: TaskInterface[] = [
     {
         id: 't-001',
         title: 'Completar el Prototipo de UI',
@@ -247,7 +238,6 @@ const Home = (): JSX.Element => {
                             <TaskList 
                                 tasks={MOCK_TASKS}
                                 onDelete={onPressDelete}
-
                                 onPressDetail={onPressDetail}
                             
                             />

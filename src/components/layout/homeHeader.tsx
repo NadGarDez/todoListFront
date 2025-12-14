@@ -21,11 +21,11 @@ const HomeHeader = (props: HomeHeaderProps): JSX.Element => {
                 width: '100%',
                 backgroundColor: 'white',
                 borderBottom: '1px solid #EEEEEE',
+                position: 'sticky'
             }}
         >
-            {/* 1. Título de la Aplicación (TodoList con Estilo Vistoso) */}
             <Typography
-                variant="h5" // Hacemos el texto más grande para que sea el principal
+                variant="h5" 
                 component="h1"
                 sx={{
                     fontFamily: 'Roboto, Arial, sans-serif', 
@@ -41,7 +41,6 @@ const HomeHeader = (props: HomeHeaderProps): JSX.Element => {
                 TodoList
             </Typography>
 
-            {/* 2. Botón/Icono de Cerrar Sesión */}
             <IconButton
                 onClick={onPressLogOut}
                 size="medium" // Tamaño medio

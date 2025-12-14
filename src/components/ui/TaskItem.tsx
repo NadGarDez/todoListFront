@@ -2,15 +2,13 @@ import React, { type JSX, useState } from "react";
 import { Box, Typography, IconButton, Menu, MenuItem } from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert'; // Icono de tres puntos
 import TaskLabel from "./taskLabel";
+import type { TaskInterface } from "../../types";
 
-interface TaskItemProps {
-    id: string;
-    title: string; 
-    labels: string[];
-    description: string;
+type TaskItemProps = {
+    
     onDelete: (id: string) => void;
     onPressDetail: (id: string) => void;
-}
+} & TaskInterface
 
 const PRIMARY_ORANGE = "#FF9900";
 

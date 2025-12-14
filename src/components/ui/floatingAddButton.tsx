@@ -18,7 +18,7 @@ export const FloatingAddButton = (props: FloatingAddButtonProps): JSX.Element =>
                 position: 'absolute', 
                 bottom: 30, 
                 right: 12, 
-                zIndex: 100, 
+                zIndex: 5, 
             }}
         >
             <Fab
