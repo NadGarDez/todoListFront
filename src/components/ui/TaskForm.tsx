@@ -1,4 +1,4 @@
-import React, { type JSX, useState } from "react";
+import React, { type JSX, useEffect, useState } from "react";
 import { 
     Box, 
     Typography, 
@@ -18,8 +18,6 @@ import { staticTask } from "../../constants";
 const PRIMARY_ORANGE = "#FF9900";
 const MAX_TAGS = 3; 
 
-
-
 interface TaskFormProps {
     task: TaskInterface;
     back: () => void;
@@ -29,8 +27,16 @@ interface TaskFormProps {
 export const TaskForm = (props: TaskFormProps): JSX.Element => {
     const { task, back, onSubmit } = props;
 
+    // 1. Estado para manejar los campos (inicializado con el prop 'task')
     const [formData, setFormData] = useState<TaskInterface>(task);
     const [selectedLabel, setSelectedLabel] = useState<string>(''); 
+
+    // 2. Sincronizar el estado interno cuando el prop 'task' cambie.
+    // Esto es crucial para reutilizar el formulario en modo edición con diferentes IDs.
+    useEffect(() => {
+        setFormData(task);
+    }, [task]); // Se ejecuta cada vez que el objeto 'task' cambia (generalmente por su 'id' o referencia)
+
 
     const isEditMode = task.id !== '';
     const tagLimitReached = formData.labels.length >= MAX_TAGS; 
@@ -92,7 +98,6 @@ export const TaskForm = (props: TaskFormProps): JSX.Element => {
                 {isEditMode ? 'Editar Tarea' : 'Crear Nueva Tarea'}
             </Typography>
 
-            {/* Campos Título y Descripción (sin cambios) */}
             <TextField
                 label="Título de la tarea"
                 name="title"
@@ -116,6 +121,7 @@ export const TaskForm = (props: TaskFormProps): JSX.Element => {
                 size="medium"
             />
 
+            {/* Select para Etiquetas Estáticas */}
             <FormControl fullWidth size="small" variant="outlined" disabled={tagLimitReached}>
                 <InputLabel id="select-label">Agregar Etiqueta</InputLabel>
                 <Select
@@ -143,6 +149,7 @@ export const TaskForm = (props: TaskFormProps): JSX.Element => {
                 </FormHelperText>
             </FormControl>
 
+            {/* Lista de Etiquetas Agregadas (Chips) */}
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, minHeight: '30px', mb: 2 }}>
                 {formData.labels.map((label) => (
                     <Chip
@@ -160,6 +167,7 @@ export const TaskForm = (props: TaskFormProps): JSX.Element => {
                 ))}
             </Box>
 
+            {/* Botones de Acción (sin cambios) */}
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
                 <Button
                     variant="outlined"

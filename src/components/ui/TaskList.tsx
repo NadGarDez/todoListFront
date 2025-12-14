@@ -1,8 +1,7 @@
 import React, { type JSX } from "react";
 import { Box, Typography } from "@mui/material";
-import { TaskItem } from "./TaskItem"; 
+import { TaskItem } from "./TaskItem";
 import type { TaskInterface } from "../../types";
-
 
 interface TaskListProps {
     tasks: TaskInterface[];
@@ -23,17 +22,16 @@ const TaskList = (props: TaskListProps): JSX.Element => {
         );
     }
 
-
     return (
-        <Box 
-            sx={{ 
-                width: '100%', 
+        <Box
+            sx={{
+                width: '100%',
                 maxHeight: 500,
                 overflow: 'scroll'
             }}
         >
             {tasks.map((task) => (
-                <TaskItem 
+                <TaskItem
                     key={task.id}
                     id={task.id}
                     title={task.title}

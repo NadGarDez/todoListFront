@@ -46,7 +46,6 @@ export const DefaultModal = (props: DefaultModalProps): JSX.Element => {
                 }}
             />
 
-
             <Box
                 sx={{
                     position: 'absolute',

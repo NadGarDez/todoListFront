@@ -264,11 +264,8 @@ const Home = (): JSX.Element => {
                 </Slider>
 
                 <FloatingAddButton
-
                     onPressAdd={onPressAdd}
                 />
-
-                {/* modal aquí tendremos un selector de contenido dinámico*/}
 
                 <DefaultModal
                     visible={modalState.visible}
