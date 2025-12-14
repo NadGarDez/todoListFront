@@ -9,6 +9,7 @@ import HomeHeader from "../components/layout/homeHeader";
 import { FloatingAddButton } from "../components/ui/floatingAddButton";
 import TaskLabel from "../components/ui/taskLabel";
 import { TaskItem } from "../components/ui/TaskItem";
+import TaskList from "../components/ui/TaskList";
 
 
 const sliderConfig: Settings = {
@@ -21,10 +22,147 @@ const sliderConfig: Settings = {
 };
 
 
+interface Task {
+    id: string;
+    title: string; 
+    labels: string[];
+    description: string; 
+    
+}
+
+
+
 interface modalState { 
     visible: boolean,
     contentName: 'signOut' | 'delete'
 }
+
+
+
+const MOCK_TASKS: Task[] = [
+    {
+        id: 't-001',
+        title: 'Completar el Prototipo de UI',
+        labels: ['Diseño', 'Alta Prioridad'],
+        description: 'Finalizar la maquetación de los componentes base (Header, TaskItem, FAB) antes de la reunión de las 14:00.',
+    },
+    {
+        id: 't-002',
+        title: 'Revisión de Seguridad AWS Cognito',
+        labels: ['Backend', 'Urgente'],
+        description: 'Verificar las políticas de acceso de IAM y los flujos de autenticación de Cognito para asegurar la robustez.',
+    },
+    {
+        id: 't-003',
+        title: 'Implementar Componente TaskFormContent',
+        labels: ['Frontend', 'Desarrollo'],
+        description: 'Utilizar MUI y hooks para gestionar el estado del formulario de creación/edición de tareas.',
+    },
+    {
+        id: 't-004',
+        title: 'Responder Correos Pendientes',
+        labels: ['Administrativo'],
+        description: 'Responder a Juan, María y Pedro sobre el estado del proyecto y las dependencias de la API.',
+    },
+    {
+        id: 't-005',
+        title: 'Refactorizar Lógica de Labels en TaskItem',
+        labels: ['Frontend', 'Refactor'],
+        description: 'Asegurar que la asignación de colores en TaskLabel sea determinista basada en el nombre de la etiqueta.',
+    },
+    {
+        id: 't-006',
+        title: 'Preparar Presentación Semanal',
+        labels: ['Reunión'],
+        description: 'Crear diapositivas con el progreso de la semana y los planes para la próxima iteración.',
+    },
+    {
+        id: 't-007',
+        title: 'Investigar Librería de Gráficos',
+        labels: ['Investigación'],
+        description: 'Evaluar tres opciones de librerías (Recharts, Nivo, Chart.js) para el dashboard de métricas.',
+    },
+    {
+        id: 't-008',
+        title: 'Configurar Variables de Entorno de Producción',
+        labels: ['DevOps', 'Backend'],
+        description: 'Ajustar las variables de entorno para el despliegue final en la etapa de producción.',
+    },
+    {
+        id: 't-009',
+        title: 'Comprar Suministros de Oficina',
+        labels: ['Personal', 'Baja Prioridad'],
+        description: 'Necesito comprar tinta para la impresora y resmas de papel A4.',
+    },
+    {
+        id: 't-010',
+        title: 'Pruebas E2E para el Cierre de Sesión',
+        labels: ['Testing', 'Seguridad'],
+        description: 'Escribir scripts de Cypress para verificar que el logout de Cognito funcione correctamente en todos los navegadores.',
+    },
+    {
+        id: 't-011',
+        title: 'Documentación de Endpoints REST',
+        labels: ['Documentación', 'Backend'],
+        description: 'Documentar los 5 endpoints principales de la API de tareas en Swagger/OpenAPI.',
+    },
+    {
+        id: 't-012',
+        title: 'Optimización de Carga Inicial (Bundling)',
+        labels: ['Rendimiento'],
+        description: 'Analizar el tamaño del bundle con Webpack y aplicar Code Splitting si es necesario.',
+    },
+    {
+        id: 't-013',
+        title: 'Llamar al Cliente X por Retraso',
+        labels: ['Ventas', 'Urgente'],
+        description: 'Contactar al cliente para informarle sobre el pequeño retraso en la entrega del módulo de reportes.',
+    },
+    {
+        id: 't-014',
+        title: 'Creación de Componente TaskList',
+        labels: ['Frontend', 'Completado'],
+        description: 'Implementación del mapeo de tareas y renderizado de TaskItem. (Listo para integración).',
+    },
+    {
+        id: 't-015',
+        title: 'Instalar Nueva Versión de Node.js',
+        labels: ['Mantenimiento'],
+        description: 'Actualizar la versión local de Node.js a la 20.x y verificar que no haya conflictos de dependencias.',
+    },
+    {
+        id: 't-016',
+        title: 'Diseñar Icono para la Aplicación',
+        labels: ['Diseño'],
+        description: 'Crear un favicon y los iconos de la aplicación en formato PNG para iOS y Android.',
+    },
+    {
+        id: 't-017',
+        title: 'Configurar Hooks de Validación en el Formulario',
+        labels: ['Frontend', 'Desarrollo'],
+        description: 'Usar React Hook Form o Joyeux para validar campos requeridos (título, al menos).',
+    },
+    {
+        id: 't-018',
+        title: 'Revisión de Código del Módulo de Autenticación',
+        labels: ['Revisión', 'Seguridad'],
+        description: 'Realizar una revisión de código a fondo del flujo de login y tokens.',
+    },
+    {
+        id: 't-019',
+        title: 'Planificar el Sprint 2',
+        labels: ['Gestión'],
+        description: 'Definir objetivos, asignar puntos y priorizar las historias de usuario para el siguiente ciclo.',
+    },
+    {
+        id: 't-020',
+        title: 'Resolver Bug de Desplazamiento en iOS',
+        labels: ['Bug', 'Frontend'],
+        description: 'El scroll infinito se bloquea en Safari móvil al llegar al final de la lista de tareas. Investigar `overscroll-behavior`.',
+    },
+];
+
+
 
 const Home = (): JSX.Element => {
 
@@ -96,7 +234,7 @@ const Home = (): JSX.Element => {
                 <Slider {...sliderConfig} ref={sliderRef}>
 
                     <div>
-                        <TaskItem 
+                        {/* <TaskItem 
                             title="Super titulo"
                             description="fjdklas;jfkadsl;  jfkdla; fjdaskl; f jflajf dsakl; jfkdlsa; fjdkal;  jfkdlsa;f sadkl;"
                             onDelete={onPressDelete}
@@ -104,7 +242,16 @@ const Home = (): JSX.Element => {
                             labels={['lable', 'fda' , 'hola']}
                             id="23"
                         
-                        />
+                        /> */}
+
+                            <TaskList 
+                                tasks={MOCK_TASKS}
+                                onDelete={onPressDelete}
+
+                                onPressDetail={onPressDetail}
+                            
+                            />
+
                     </div>
                     <div>
                         <TaskLabel label="Page 2" />
