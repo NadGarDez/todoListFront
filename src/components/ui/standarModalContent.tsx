@@ -1,19 +1,29 @@
 import React, { type JSX } from 'react';
 import { Box, Typography, Button } from '@mui/material';
-import { CLIENT_ID, COGNITO_DOMAIN, LOGOUT_URL } from '../../constants'; 
-
-interface SignOutModalContentProps {
-    onCancel: () => void;
-}
 
 const PRIMARY_ORANGE = "#FF9900";
 
-const SignOutModalContent = (props: SignOutModalContentProps): JSX.Element => {
-    const { onCancel } = props;
+interface StandardModalContentProps {
+    title: string;
+    subtitle: string;
+    onCancel: () => void;
+    onAction: () => void; 
+    actionLabel: string; 
+    isActionDangerous?: boolean; 
+}
 
-    const signOut = () => { 
-        window.location.href = `${COGNITO_DOMAIN}/logout?client_id=${CLIENT_ID}&logout_uri=${encodeURIComponent(LOGOUT_URL)}`;
-    };
+export const StandardModalContent = (props: StandardModalContentProps): JSX.Element => {
+    const { 
+        title, 
+        subtitle, 
+        onCancel, 
+        onAction, 
+        actionLabel,
+        isActionDangerous = false,
+    } = props;
+
+    const actionColor = isActionDangerous ? '#D32F2F' : PRIMARY_ORANGE; // Rojo de MUI si es peligroso
+    const actionHoverColor = isActionDangerous ? '#C62828' : '#E68A00'; 
 
     return ( 
         <Box 
@@ -30,25 +40,25 @@ const SignOutModalContent = (props: SignOutModalContentProps): JSX.Element => {
                 component="h2" 
                 sx={{ 
                     fontWeight: 600,
-                    fontSize: '1rem', 
+                    fontSize: '1rem',
                 }}
             >
-                ¿Estás seguro de que quieres cerrar sesión?
+                {title}
             </Typography>
             
             <Typography 
                 variant="caption" 
                 color="text.secondary"
             >
-                Serás redirigido a la página de inicio de sesión.
+                {subtitle}
             </Typography>
 
             <Box
                 sx={{
                     display: 'flex',
                     flexDirection: 'row', 
-                    width: '60%',
-                    justifyContent: 'space-around', 
+                    width: '60%', 
+                    justifyContent: 'space-between', 
                 }}
             >
                 <Button
@@ -62,23 +72,24 @@ const SignOutModalContent = (props: SignOutModalContentProps): JSX.Element => {
                 >
                     Cancelar
                 </Button>
+
                 <Button
                     variant="contained"
                     size="small" 
-                    onClick={signOut}
+                    onClick={onAction}
                     sx={{
-                        backgroundColor: PRIMARY_ORANGE,
+                        backgroundColor: actionColor,
                         '&:hover': {
-                            backgroundColor: '#E68A00',
+                            backgroundColor: actionHoverColor,
                         },
                         minWidth: 'auto', 
                     }}
                 >
-                    Aceptar
+                    {actionLabel}
                 </Button>
             </Box>
         </Box>
     );
 }
 
-export default SignOutModalContent;
+export default StandardModalContent;

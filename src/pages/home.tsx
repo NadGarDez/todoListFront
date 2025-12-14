@@ -3,7 +3,8 @@ import BackgroundLayout from "../components/layout/backgroundLaout";
 import MobileFirstContainer from "../components/layout/mobileFirstContainer";
 import DefaultModal from "../components/ui/defaultModal";
 import Slider, { type Settings } from 'react-slick';
-import SignOutModalContent from "../components/ui/SignOutModalContent";
+import StandardModalContent from "../components/ui/standarModalContent";
+import { CLIENT_ID, COGNITO_DOMAIN, LOGOUT_URL } from "../constants";
 
 
 const sliderConfig: Settings = {
@@ -16,29 +17,36 @@ const sliderConfig: Settings = {
 };
 
 
-interface modalState { // futuro estado del modal
+interface modalState { 
     visible: boolean,
-    contentName: 'signOut' | 'delete' | 'none'
+    contentName: 'signOut' | 'delete'
 }
 
 const Home = (): JSX.Element => {
 
     const signOut = () => {
-        const clientId = "4g18cqrugc9kv0tdev8vhsgieh";
-        const logoutUri = "http://localhost:5173/logout";
-        const cognitoDomain = "https://us-east-2tr2vhtad9.auth.us-east-2.amazoncognito.com";
-        window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutUri)}`;
+        window.location.href = `${COGNITO_DOMAIN}/logout?client_id=${CLIENT_ID}}&logout_uri=${encodeURIComponent(LOGOUT_URL)}`;
 
     };
 
 
     const sliderRef = useRef<Slider>(null);
 
-    const [visible, setVisible] = useState<boolean>(false);
+    const [modalState, setModalStatus] = useState<modalState>({
+        visible: false,
+        contentName: 'signOut'
+    })
 
-    const toggleVisibility = () => setVisible(!visible);
+    const toggleVisibility = () => {
+        setModalStatus(
+            {
+                ...modalState, visible: !modalState.visible
+            }
+        )
+    }
+
     const onChangeVisibility = (newVisibility: boolean) => {
-        setVisible(newVisibility)
+        setModalStatus({ ...modalState, visible: newVisibility })
     }
 
     const back = () => {
@@ -59,8 +67,6 @@ const Home = (): JSX.Element => {
                 <button onClick={toggleVisibility}>toggle</button>
 
 
-
-
                 <Slider {...sliderConfig} ref={sliderRef}>
 
                     <div>
@@ -72,22 +78,26 @@ const Home = (): JSX.Element => {
 
                 </Slider>
 
-
-
-
-
-
-
                 {/* modal aquí tendremos un selector de contenido dinámico*/}
 
                 <DefaultModal
-                    visible={visible}
+                    visible={modalState.visible}
                     relativeHeight="35%"
                     onChangeVisibility={onChangeVisibility}
                 >
-                    <SignOutModalContent 
-                        onCancel={toggleVisibility}
-                    />
+                    {
+                        modalState.contentName === 'signOut' ? (
+                            <StandardModalContent
+                                title="¿Estás seguro de que quieres cerrar sesión?"
+                                subtitle="Serás redirigido a la página de inicio de sesión."
+                                onCancel={toggleVisibility}
+                                onAction={signOut}
+                                actionLabel="Cerrar Sesión"
+                            />
+                        ) : null
+                    }
+
+
                 </DefaultModal>
             </MobileFirstContainer>
         </BackgroundLayout>
