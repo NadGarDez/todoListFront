@@ -32,7 +32,6 @@ const MobileFirstContainer = ({ children }: MobileFirstContainerProps): JSX.Elem
             <Box 
                 sx={{
                     flexGrow: 1, 
-                    p: 3, 
                     overflowY: 'auto', 
                 }}
             >

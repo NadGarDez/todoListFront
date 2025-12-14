@@ -5,6 +5,7 @@ import DefaultModal from "../components/ui/defaultModal";
 import Slider, { type Settings } from 'react-slick';
 import StandardModalContent from "../components/ui/standarModalContent";
 import { CLIENT_ID, COGNITO_DOMAIN, LOGOUT_URL } from "../constants";
+import HomeHeader from "../components/layout/homeHeader";
 
 
 const sliderConfig: Settings = {
@@ -58,14 +59,32 @@ const Home = (): JSX.Element => {
     }
 
 
+    const onPressLogOut = () => {
+        setModalStatus(
+            {
+                contentName: 'signOut',
+                visible: true
+            }
+        )
+    }
+
+    const onPressEdit = () => {
+
+    }
+
+    const onPressCreate = () => {
+
+    }
+
+
     return (
 
         <BackgroundLayout >
             <MobileFirstContainer>
-                <button onClick={next}>next</button>
-                <button onClick={back}>back</button>
-                <button onClick={toggleVisibility}>toggle</button>
-
+                <HomeHeader 
+                
+                    onPressLogOut={onPressLogOut}
+                />
 
                 <Slider {...sliderConfig} ref={sliderRef}>
 
