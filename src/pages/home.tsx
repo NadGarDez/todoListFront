@@ -7,6 +7,7 @@ import StandardModalContent from "../components/ui/standarModalContent";
 import { CLIENT_ID, COGNITO_DOMAIN, LOGOUT_URL } from "../constants";
 import HomeHeader from "../components/layout/homeHeader";
 import { FloatingAddButton } from "../components/ui/floatingAddButton";
+import TaskLabel from "../components/ui/taskLabel";
 
 
 const sliderConfig: Settings = {
@@ -90,10 +91,10 @@ const Home = (): JSX.Element => {
                 <Slider {...sliderConfig} ref={sliderRef}>
 
                     <div>
-                        page1
+                        <TaskLabel label="Page 1" />
                     </div>
                     <div>
-                        Page 2
+                        <TaskLabel label="Page 2" />
                     </div>
 
                 </Slider>
