@@ -13,21 +13,17 @@ const MobileFirstContainer = ({ children }: MobileFirstContainerProps): JSX.Elem
             
             sx={{
                 position: 'relative', 
-                
                 height: '85vh', 
-                
                 width: {
                     xs: '90vw',  
                     sm: '70vw',  
                     md: '450px', 
                 },
-
                 borderRadius: 4, 
                 p: 0, 
                 overflow:'hidden',
                 display: 'flex',
                 flexDirection: 'column',
-                
                 overflowY: 'auto', 
                 backgroundColor: 'rgba(255, 255, 255, 0.95)',
             }}

@@ -3,6 +3,7 @@ import BackgroundLayout from "../components/layout/backgroundLaout";
 import MobileFirstContainer from "../components/layout/mobileFirstContainer";
 import DefaultModal from "../components/ui/defaultModal";
 import Slider, { type Settings } from 'react-slick';
+import SignOutModalContent from "../components/ui/SignOutModalContent";
 
 
 const sliderConfig: Settings = {
@@ -55,6 +56,7 @@ const Home = (): JSX.Element => {
             <MobileFirstContainer>
                 <button onClick={next}>next</button>
                 <button onClick={back}>back</button>
+                <button onClick={toggleVisibility}>toggle</button>
 
 
 
@@ -80,10 +82,12 @@ const Home = (): JSX.Element => {
 
                 <DefaultModal
                     visible={visible}
-                    relativeHeight="70%"
+                    relativeHeight="35%"
                     onChangeVisibility={onChangeVisibility}
                 >
-                    <p>super modal</p>
+                    <SignOutModalContent 
+                        onCancel={toggleVisibility}
+                    />
                 </DefaultModal>
             </MobileFirstContainer>
         </BackgroundLayout>
