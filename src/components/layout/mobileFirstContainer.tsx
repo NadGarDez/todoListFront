@@ -1,7 +1,6 @@
 import React, { type JSX, type ReactNode } from "react";
 import { Box, Paper } from "@mui/material";
 
-// La interfaz espera que este componente reciba el contenido que va a contener
 interface MobileFirstContainerProps {
     children: ReactNode;
 }
@@ -13,7 +12,9 @@ const MobileFirstContainer = ({ children }: MobileFirstContainerProps): JSX.Elem
             elevation={8} 
             
             sx={{
-                height: '78vh', 
+                position: 'relative', 
+                
+                height: '85vh', 
                 
                 width: {
                     xs: '90vw',  
@@ -22,16 +23,54 @@ const MobileFirstContainer = ({ children }: MobileFirstContainerProps): JSX.Elem
                 },
 
                 borderRadius: 4, 
-                overflowY: 'auto',
-                backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                
-                p: 3, 
+                p: 0, 
                 
                 display: 'flex',
                 flexDirection: 'column',
+                
+                overflowY: 'auto', 
+                backgroundColor: 'rgba(255, 255, 255, 0.95)',
             }}
         >
-            {children}
+            
+            <Box 
+                sx={{
+                    flexGrow: 1, 
+                    p: 3, 
+                    overflowY: 'auto', 
+                }}
+            >
+                {children}
+            </Box>
+
+
+            <Box
+                sx={{
+                    position: 'sticky',
+                    bottom: 0,
+                    
+                    width: '100%',
+                    height: '24px', 
+                    
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'flex-start', 
+                    
+                    backgroundColor: 'transparent', 
+                    borderBottomLeftRadius: 4,
+                    borderBottomRightRadius: 4,
+                }}
+            >
+                <Box
+                    sx={{
+                        width: '35%', 
+                        height: '5px', 
+                        borderRadius: '10px', 
+                        backgroundColor: '#757575', 
+                        marginTop: '8px', 
+                    }}
+                />
+            </Box>
             
         </Box>
     );
