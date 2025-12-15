@@ -27,15 +27,12 @@ interface TaskFormProps {
 export const TaskForm = (props: TaskFormProps): JSX.Element => {
     const { task, back, onSubmit } = props;
 
-    // 1. Estado para manejar los campos (inicializado con el prop 'task')
     const [formData, setFormData] = useState<TaskInterface>(task);
     const [selectedLabel, setSelectedLabel] = useState<string>(''); 
 
-    // 2. Sincronizar el estado interno cuando el prop 'task' cambie.
-    // Esto es crucial para reutilizar el formulario en modo edición con diferentes IDs.
     useEffect(() => {
         setFormData(task);
-    }, [task]); // Se ejecuta cada vez que el objeto 'task' cambia (generalmente por su 'id' o referencia)
+    }, [task]); 
 
 
     const isEditMode = task.id !== '';

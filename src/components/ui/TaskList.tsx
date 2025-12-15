@@ -27,8 +27,10 @@ const TaskList = (props: TaskListProps): JSX.Element => {
             sx={{
                 width: '100%',
                 maxHeight: 500,
-                overflow: 'scroll'
+                overflow: 'scroll',
+                position:'relative'
             }}
+
         >
             {tasks.map((task) => (
                 <TaskItem

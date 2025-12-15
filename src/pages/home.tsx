@@ -7,7 +7,6 @@ import StandardModalContent from "../components/ui/standarModalContent";
 import { CLIENT_ID, COGNITO_DOMAIN, LOGOUT_URL } from "../constants";
 import HomeHeader from "../components/layout/homeHeader";
 import { FloatingAddButton } from "../components/ui/floatingAddButton";
-import TaskLabel from "../components/ui/taskLabel";
 import TaskList from "../components/ui/TaskList";
 import type { TaskInterface } from "../types";
 import { TaskForm } from "../components/ui/TaskForm";
@@ -28,7 +27,6 @@ interface modalState {
     visible: boolean,
     contentName: 'signOut' | 'delete'
 }
-
 
 
 const MOCK_TASKS: TaskInterface[] = [
@@ -154,8 +152,8 @@ const MOCK_TASKS: TaskInterface[] = [
     },
 ];
 
-const defaultTaskData:TaskInterface = {
-    id:'',
+const defaultTaskData: TaskInterface = {
+    id: '',
     title: '',
     labels: [],
     description: ''
@@ -164,18 +162,18 @@ const defaultTaskData:TaskInterface = {
 const Home = (): JSX.Element => {
 
     const [activeItem, setActiveItem] = useState<TaskInterface>(defaultTaskData);
-
-    const signOut = () => {
-        window.location.href = `${COGNITO_DOMAIN}/logout?client_id=${CLIENT_ID}}&logout_uri=${encodeURIComponent(LOGOUT_URL)}`;
-
-    };
-
     const sliderRef = useRef<Slider>(null);
+
+    const [activeSlideIndex, setActiveSlideIndex] = useState(0);
 
     const [modalState, setModalStatus] = useState<modalState>({
         visible: false,
         contentName: 'signOut'
     })
+
+    const signOut = () => {
+        window.location.href = `${COGNITO_DOMAIN}/logout?client_id=${CLIENT_ID}&logout_uri=${encodeURIComponent(LOGOUT_URL)}`;
+    };
 
     const toggleVisibility = () => {
         setModalStatus(
@@ -208,13 +206,13 @@ const Home = (): JSX.Element => {
         )
     }
 
-    const onPressDetail = (item:TaskInterface) => {
+    const onPressDetail = (item: TaskInterface) => {
         setActiveItem(item);
         next()
     }
 
-    const onPressDelete = (item:TaskInterface) => {
-        setActiveItem(item); 
+    const onPressDelete = (item: TaskInterface) => {
+        setActiveItem(item);
     }
 
     const onPressAdd = () => {
@@ -224,14 +222,22 @@ const Home = (): JSX.Element => {
 
 
     const finaleDelete = () => {
-        // async operation
-         setActiveItem(defaultTaskData);
+        setActiveItem(defaultTaskData);
+        toggleVisibility(); 
     }
 
 
-    const createOrUpdate = (data:TaskInterface) => {
-        
+    const createOrUpdate = (data: TaskInterface) => {
+        back(); 
     }
+
+    const finalSliderConfig: Settings = {
+        ...sliderConfig,
+        beforeChange(_, nextSlide) {
+            setActiveSlideIndex(nextSlide)
+        },
+    };
+
 
 
     return (
@@ -239,12 +245,11 @@ const Home = (): JSX.Element => {
         <BackgroundLayout >
             <MobileFirstContainer>
                 <HomeHeader
-
                     onPressLogOut={onPressLogOut}
                 />
 
-                <Slider {...sliderConfig} ref={sliderRef}>
-
+                <Slider {...finalSliderConfig} ref={sliderRef}>
+                    {/* Índice 0: Lista de Tareas */}
                     <div>
                         <TaskList
                             tasks={MOCK_TASKS}
@@ -254,18 +259,20 @@ const Home = (): JSX.Element => {
 
                     </div>
                     <div>
-                        <TaskForm 
+                        <TaskForm
                             task={activeItem}
                             onSubmit={createOrUpdate}
                             back={back}
                         />
                     </div>
-
                 </Slider>
 
-                <FloatingAddButton
-                    onPressAdd={onPressAdd}
-                />
+                {activeSlideIndex === 0 && (
+                    <FloatingAddButton
+                        onPressAdd={onPressAdd}
+                    />
+                )}
+
 
                 <DefaultModal
                     visible={modalState.visible}
@@ -282,12 +289,12 @@ const Home = (): JSX.Element => {
                                 actionLabel="Cerrar Sesión"
                             />
                         ) : (
-                            <StandardModalContent 
+                            <StandardModalContent
                                 title={`¿Estás seguro de que quieres eliminar el elemento ${activeItem.id}?`}
                                 subtitle="Los datos eliminados son irrecuperables."
                                 onCancel={toggleVisibility}
                                 onAction={finaleDelete}
-                                actionLabel="Cerrar Sesión"
+                                actionLabel="Eliminar"
                             />
                         )
                     }

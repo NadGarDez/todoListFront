@@ -1,81 +1,87 @@
 import React, { type JSX } from "react";
 import { useAuth } from "react-oidc-context";
+import { Box, Typography, Button } from "@mui/material"; // Importación de componentes MUI
+import LockIcon from '@mui/icons-material/Lock'; // Icono para el inicio de sesión
 
-const LoginPage = ():JSX.Element => {
+import BackgroundLayout from "../components/layout/backgroundLaout";
+import MobileFirstContainer from "../components/layout/mobileFirstContainer";
 
-    const {signinRedirect} = useAuth();
+// Colores de la paleta
+const PRIMARY_ORANGE = "#FF9900";
+const COMPLEMENTARY_GREEN = "#00A388"; // El color que elegimos para el título
 
-    const handleLogin = async  () => {
-       await signinRedirect()
+const LoginPage = (): JSX.Element => {
+
+    const { signinRedirect } = useAuth();
+
+    const handleLogin = async () => {
+       await signinRedirect();
     };
 
 
     return (
-        <div
-            style={{
-                minHeight: "100vh",
-                width: '100%',
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                background: "#f3f4f6",
-                margin: 0,
-            }}
-        >
-            <button
-                onClick={handleLogin}
-                style={{
-                    padding: "10px 20px",
-                    borderRadius: 6,
-                    border: "none",
-                    background: "#2563eb",
-                    color: "white",
-                    fontSize: 16,
-                    cursor: "pointer",
-                }}
-            >
-                Login
-            </button>
-        </div>
+        <BackgroundLayout>
+            <MobileFirstContainer>
+                <Box
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        height: '100%', 
+                        padding: 3,
+                        textAlign: 'center',
+                    }}
+                >
+                    <Typography 
+                        variant="h3" 
+                        component="h1" 
+                        sx={{
+                            fontWeight: 900, 
+                            color: COMPLEMENTARY_GREEN,
+                            letterSpacing: '0.05em', 
+                            marginBottom: 4,
+                            textTransform: 'uppercase',
+                        }}
+                    >
+                        TodoList
+                    </Typography>
+
+                    <LockIcon sx={{ fontSize: 80, color: PRIMARY_ORANGE, marginBottom: 2 }} />
+
+                    <Typography 
+                        variant="h6" 
+                        component="p"
+                        color="text.secondary"
+                        sx={{
+                            marginBottom: 6,
+                            fontWeight: 300,
+                        }}
+                    >
+                        Inicia sesión para acceder a tus tareas pendientes.
+                    </Typography>
+
+                    <Button
+                        variant="contained"
+                        size="large"
+                        fullWidth
+                        onClick={handleLogin}
+                        sx={{
+                            backgroundColor: PRIMARY_ORANGE,
+                            color: 'white',
+                            fontWeight: 700,
+                            paddingY: 1.5,
+                            '&:hover': {
+                                backgroundColor: '#E68A00', 
+                            }
+                        }}
+                    >
+                        Iniciar Sesión
+                    </Button>
+                </Box>
+            </MobileFirstContainer>
+        </BackgroundLayout>
     );
 };
 
 export default LoginPage;
-
-
-
-// const auth = useAuth();
-
-//   const signOut = async () => {
-//     await auth.removeUser();
-
-//     const clientId = "4g18cqrugc9kv0tdev8vhsgieh";
-//     const logoutUri = "http://localhost:5173/";
-//     const cognitoDomain = "us-east-2_TR2vhtAD9";
-//     window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutUri)}`;
-//   };
-
-//   if (auth.isLoading) {
-//     switch (auth.activeNavigator) {
-//       case "signinSilent":
-//       case "signinRedirect":
-//         return <div>Iniciando sesión en silencio...</div>;
-//       case "signoutRedirect":
-//         return <div>Cerrando sesión...</div>;
-//       default:
-//         return <div>Cargando...</div>;
-//     }
-//   }
-
-//   if (auth.error) {
-//     return <div>Oops... Error: {auth.error.message}</div>;
-//   }
-
-//   if (!auth.isAuthenticated) {
-//     return (
-//       <div style={{ padding: '20px' }}>
-//         <p>No autenticado.</p>
-//         <button onClick={() => auth.signinRedirect()}>Iniciar Sesión</button>
-//       </div>
-//     );
-//   }
