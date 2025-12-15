@@ -62,7 +62,6 @@ export async function getTasks(token: string): Promise<ApiTask[]> {
 export async function createTask(token: string, payload: TaskInterface): Promise<ApiTask> {
     try {
 
-        console.log('payload', payload)
         const apiClient = createApiClient(BASE_URL_LOCAL, token);
         const response = await apiClient.post<ApiTask>('/', payload);
         return response.data;

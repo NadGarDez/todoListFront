@@ -9,9 +9,9 @@ import HomeHeader from "../components/layout/homeHeader";
 import { FloatingAddButton } from "../components/ui/floatingAddButton";
 import TaskList from "../components/ui/TaskList";
 import { type ApiTask, type TaskInterface } from "../types";
-import { TaskForm } from "../components/ui/TaskForm";
 import { createTask, deleteTask, getTask, getTasks, updateTask } from "../api";
 import { useAuth } from "react-oidc-context";
+import { TaskForm } from "../components/ui/TaskForm";
 
 const sliderConfig: Settings = {
     dots: false,
@@ -24,9 +24,9 @@ const sliderConfig: Settings = {
 
 interface modalState {
     visible: boolean,
-    contentName: 'signOut' | 'delete'
+    contentName: 'signOut' | 'delete' | 'error',
+    error?: string
 }
-
 
 const defaultTaskData: TaskInterface = {
     id: 0,
@@ -57,8 +57,21 @@ const Home = (): JSX.Element => {
         () => {
             return user?.access_token ?? ''
         },
-        []
+        [user] 
     );
+    
+    const handleError = useCallback((error: unknown) => {
+        const errorMessage = error instanceof Error 
+            ? error.message 
+            : typeof error === 'string' ? error : 
+              'Ocurrió un error desconocido.';
+        
+        setModalStatus({
+            visible: true,
+            contentName: 'error',
+            error: errorMessage
+        });
+    }, []);
 
     const requestTasks = useCallback(
         async () => {
@@ -66,10 +79,10 @@ const Home = (): JSX.Element => {
                 const tasks = await getTasks(token)
                 setTasks(tasks);
             } catch (error) {
-                // handle error
+                handleError(error) 
             }
         },
-        [token, getTask]
+        [token, handleError] 
     )
 
     useEffect(
@@ -78,7 +91,7 @@ const Home = (): JSX.Element => {
                 requestTasks()
             }
         },
-        [activeSlideIndex]
+        [activeSlideIndex, requestTasks]
     )
 
     const signOut = () => {
@@ -129,7 +142,6 @@ const Home = (): JSX.Element => {
                 visible: true
             }
         )
-
     }
 
     const onPressAdd = () => {
@@ -139,24 +151,29 @@ const Home = (): JSX.Element => {
 
 
     const finaleDelete = async () => {
-        await deleteTask(token, activeItem.id)
-        setActiveItem(defaultTaskData);
-        toggleVisibility();
-        requestTasks();
+        try {
+            await deleteTask(token, activeItem.id)
+            setActiveItem(defaultTaskData);
+            toggleVisibility();
+            requestTasks();
+        } catch (error) {
+            handleError(error);
+        }
     }
 
 
     const createOrUpdate = async (data: TaskInterface | ApiTask) => {
-
-        if (data.id === 0) {
-            await createTask(token, data as TaskInterface);
+        try {
+            if (data.id === 0) {
+                await createTask(token, data as TaskInterface);
+            } else {
+                await updateTask(token, data as ApiTask)
+            }
+            back();
+            requestTasks(); 
+        } catch (error) {
+            handleError(error);
         }
-
-        else {
-            await updateTask(token, data as ApiTask)
-        }
-
-        back();
     }
 
     const finalSliderConfig: Settings = {
@@ -175,7 +192,6 @@ const Home = (): JSX.Element => {
                 />
 
                 <Slider {...finalSliderConfig} ref={sliderRef}>
-                    {/* Índice 0: Lista de Tareas */}
                     <div>
                         <TaskList
                             tasks={tasks}
@@ -214,13 +230,20 @@ const Home = (): JSX.Element => {
                                 onAction={signOut}
                                 actionLabel="Cerrar Sesión"
                             />
-                        ) : (
+                        ) : modalState.contentName === 'delete'? (
                             <StandardModalContent
                                 title={`¿Estás seguro de que quieres eliminar el elemento ${activeItem.id}?`}
                                 subtitle="Los datos eliminados son irrecuperables."
                                 onCancel={toggleVisibility}
                                 onAction={finaleDelete}
                                 actionLabel="Eliminar"
+                            />
+                        ) : (
+                            <StandardModalContent
+                                title={`Error`}
+                                subtitle={modalState.error ?? 'Error desconocido de la aplicación.'}
+                                onAction={toggleVisibility}
+                                actionLabel="Aceptar"
                             />
                         )
                     }

@@ -6,7 +6,7 @@ const PRIMARY_ORANGE = "#FF9900";
 interface StandardModalContentProps {
     title: string;
     subtitle: string;
-    onCancel: () => void;
+    onCancel?: () => void; 
     onAction: () => void; 
     actionLabel: string; 
     isActionDangerous?: boolean; 
@@ -16,14 +16,18 @@ export const StandardModalContent = (props: StandardModalContentProps): JSX.Elem
     const { 
         title, 
         subtitle, 
-        onCancel, 
+        onCancel,
         onAction, 
         actionLabel,
         isActionDangerous = false,
     } = props;
 
-    const actionColor = isActionDangerous ? '#D32F2F' : PRIMARY_ORANGE; // Rojo de MUI si es peligroso
+    const actionColor = isActionDangerous ? '#D32F2F' : PRIMARY_ORANGE; 
     const actionHoverColor = isActionDangerous ? '#C62828' : '#E68A00'; 
+    
+    const showCancelButton = typeof onCancel === 'function';
+
+    const containerWidth = showCancelButton ? '60%' : '40%'; 
 
     return ( 
         <Box 
@@ -57,21 +61,24 @@ export const StandardModalContent = (props: StandardModalContentProps): JSX.Elem
                 sx={{
                     display: 'flex',
                     flexDirection: 'row', 
-                    width: '60%', 
-                    justifyContent: 'space-between', 
+                    width: containerWidth,
+                    justifyContent: showCancelButton ? 'space-between' : 'center', 
+                    marginTop: 1, 
                 }}
             >
-                <Button
-                    variant="text"
-                    size="small" 
-                    onClick={onCancel}
-                    sx={{
-                        color: PRIMARY_ORANGE,
-                        minWidth: 'auto', 
-                    }}
-                >
-                    Cancelar
-                </Button>
+                {showCancelButton && (
+                    <Button
+                        variant="text"
+                        size="small" 
+                        onClick={onCancel}
+                        sx={{
+                            color: PRIMARY_ORANGE,
+                            minWidth: 'auto', 
+                        }}
+                    >
+                        Cancelar
+                    </Button>
+                )}
 
                 <Button
                     variant="contained"
