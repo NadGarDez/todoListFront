@@ -34,11 +34,8 @@ const TaskList = (props: TaskListProps): JSX.Element => {
         >
             {tasks.map((task) => (
                 <TaskItem
-                    key={task.id}
-                    id={task.id}
-                    title={task.title}
-                    labels={task.labels}
-                    description={task.description}
+                    {...task}
+                    key={`taks_id_${task.id}`}
                     onDelete={onPressDelete}
                     onPressDetail={onPressDetail}
                 />

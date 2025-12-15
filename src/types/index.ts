@@ -3,4 +3,5 @@ export interface TaskInterface {
     title: string;
     labels: string[];
     description: string;
+    done: boolean
 }

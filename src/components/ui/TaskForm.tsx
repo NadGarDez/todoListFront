@@ -72,7 +72,7 @@ export const TaskForm = (props: TaskFormProps): JSX.Element => {
         () => {
             formik.resetForm()
         },
-        [ task]
+        [task]
     )
 
     return (
