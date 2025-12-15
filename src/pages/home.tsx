@@ -123,6 +123,13 @@ const Home = (): JSX.Element => {
 
     const onPressDelete = (item: TaskInterface) => {
         setActiveItem(item);
+        setModalStatus(
+            {
+                contentName: 'delete',
+                visible: true
+            }
+        )
+
     }
 
     const onPressAdd = () => {
@@ -135,6 +142,7 @@ const Home = (): JSX.Element => {
         await deleteTask(token, activeItem.id)
         setActiveItem(defaultTaskData);
         toggleVisibility();
+        requestTasks();
     }
 
 
@@ -157,8 +165,6 @@ const Home = (): JSX.Element => {
             setActiveSlideIndex(nextSlide)
         },
     };
-
-
 
     return (
 
