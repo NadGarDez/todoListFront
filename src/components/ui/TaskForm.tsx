@@ -1,23 +1,24 @@
 import React, { type JSX, useEffect, useState } from "react";
-import { 
-    Box, 
-    Typography, 
-    TextField, 
-    Button, 
-    Chip, 
-    Select,         
-    MenuItem,       
-    InputLabel,     
+import {
+    Box,
+    Typography,
+    TextField,
+    Button,
+    Chip,
+    Select,
+    MenuItem,
+    InputLabel,
     FormControl,
-    FormHelperText 
+    FormHelperText
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import type { TaskInterface } from "../../types";
 import { staticTask } from "../../constants";
-import { useFormik } from 'formik'; // CLAVE 1: Importar useFormik
+import { useFormik } from 'formik';
+import { taskSchema } from "../../validation";
 
 const PRIMARY_ORANGE = "#FF9900";
-const MAX_TAGS = 3; 
+const MAX_TAGS = 3;
 
 interface TaskFormProps {
     task: TaskInterface;
@@ -28,35 +29,51 @@ interface TaskFormProps {
 export const TaskForm = (props: TaskFormProps): JSX.Element => {
     const { task, back, onSubmit } = props;
 
-    const [selectedLabel, setSelectedLabel] = useState<string>(''); 
+    const [selectedLabel, setSelectedLabel] = useState<string>('');
 
     const formik = useFormik({
-        initialValues: task, 
+        initialValues: task,
         onSubmit: (values) => {
             console.log(values)
             onSubmit(values);
         },
-        enableReinitialize: true, 
+        enableReinitialize: true,
+        validationSchema: taskSchema
     });
-    
+
+    const validateLabels = () => {
+        formik.setFieldTouched('labels', true, true);
+    }
 
     const isEditMode = task.id !== '';
-    const tagLimitReached = formik.values.labels.length >= MAX_TAGS; 
+    const tagLimitReached = formik.values.labels.length >= MAX_TAGS;
 
     const handleAddLabel = (label: string) => {
         const trimmedLabel = label.trim();
         const currentLabels = formik.values.labels;
-        
+
         if (!tagLimitReached && trimmedLabel && !currentLabels.includes(trimmedLabel)) {
-            formik.setFieldValue('labels', [...currentLabels, trimmedLabel]);
+            formik.setFieldValue('labels', [...currentLabels, trimmedLabel], false); // El tercer parámetro (false) evita revalidar todo el formulario de inmediato
+            validateLabels(); // Validar solo el campo de labels
         }
         setSelectedLabel('');
     };
 
     const handleDeleteLabel = (labelToDelete: string) => {
         const updatedLabels = formik.values.labels.filter(label => label !== labelToDelete);
-        formik.setFieldValue('labels', updatedLabels);
+        formik.setFieldValue('labels', updatedLabels, false);
+        validateLabels();
     };
+
+    const hasLabelError = formik.touched.labels && Boolean(formik.errors.labels);
+
+
+    useEffect(
+        () => {
+            formik.resetForm()
+        },
+        [ task]
+    )
 
     return (
         <Box
@@ -85,60 +102,64 @@ export const TaskForm = (props: TaskFormProps): JSX.Element => {
                 {isEditMode ? 'Editar Tarea' : 'Crear Nueva Tarea'}
             </Typography>
 
-            {/* Campo Título - Conectado a Formik */}
             <TextField
                 label="Título de la tarea"
-                // CLAVE 5: Uso de getFieldProps para vincular valor, onChange y onBlur
-                {...formik.getFieldProps('title')} 
-
+                {...formik.getFieldProps('title')}
                 fullWidth
                 required
                 variant="outlined"
                 size="medium"
-                // Si usas validación, aquí irían 'error' e 'helperText' de Formik
+                error={formik.touched.title && Boolean(formik.errors.title)}
+                helperText={formik.touched.title && formik.errors.title}
             />
 
-            {/* Campo Descripción - Conectado a Formik */}
             <TextField
                 label="Descripción"
-                // CLAVE 5: Uso de getFieldProps para vincular valor, onChange y onBlur
                 {...formik.getFieldProps('description')}
                 fullWidth
                 multiline
                 rows={4}
                 variant="outlined"
                 size="medium"
+                error={formik.touched.description && Boolean(formik.errors.description)}
+                helperText={formik.touched.description && formik.errors.description}
             />
 
-            {/* Select para Etiquetas Estáticas */}
-            <FormControl fullWidth size="small" variant="outlined" disabled={tagLimitReached}>
+            <FormControl
+                fullWidth
+                size="small"
+                variant="outlined"
+                disabled={tagLimitReached}
+                error={hasLabelError}
+            >
                 <InputLabel id="select-label">Agregar Etiqueta</InputLabel>
                 <Select
                     labelId="select-label"
                     id="select-tag"
-                    value={selectedLabel} 
+                    value={selectedLabel}
                     label="Agregar Etiqueta"
                     onChange={(e) => handleAddLabel(e.target.value as string)}
-                    disabled={tagLimitReached} 
+                    disabled={tagLimitReached}
                 >
                     <MenuItem value="" disabled>
                         {tagLimitReached ? 'Límite de 3 etiquetas alcanzado' : 'Selecciona una etiqueta'}
                     </MenuItem>
-                    
+
                     {staticTask
-                        .filter(label => !formik.values.labels.includes(label)) 
+                        .filter(label => !formik.values.labels.includes(label))
                         .map((label) => (
-                        <MenuItem key={label} value={label}>
-                            {label}
-                        </MenuItem>
-                    ))}
+                            <MenuItem key={label} value={label}>
+                                {label}
+                            </MenuItem>
+                        ))}
                 </Select>
-                <FormHelperText error={tagLimitReached}>
-                    {formik.values.labels.length} / {MAX_TAGS} etiquetas seleccionadas.
+                <FormHelperText error={tagLimitReached || hasLabelError}>
+                    {hasLabelError
+                        ? formik.errors.labels
+                        : `${formik.values.labels.length} / ${MAX_TAGS} etiquetas seleccionadas.`}
                 </FormHelperText>
             </FormControl>
 
-            {/* Lista de Etiquetas Agregadas (Chips) */}
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, minHeight: '30px', mb: 2 }}>
                 {formik.values.labels.map((label) => (
                     <Chip
@@ -156,24 +177,23 @@ export const TaskForm = (props: TaskFormProps): JSX.Element => {
                 ))}
             </Box>
 
-            {/* Botones de Acción */}
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
                 <Button
                     variant="outlined"
                     onClick={back}
                     sx={{ color: PRIMARY_ORANGE, borderColor: PRIMARY_ORANGE }}
-                    disabled={formik.isSubmitting} 
+                    disabled={formik.isSubmitting}
                 >
                     Cancelar
                 </Button>
                 <Button
                     type="submit"
                     variant="contained"
-                    disabled={!formik.values.title.trim() || formik.isSubmitting} 
+                    disabled={!formik.isValid || formik.isSubmitting}
                     sx={{ backgroundColor: PRIMARY_ORANGE, '&:hover': { backgroundColor: '#E68A00' } }}
                 >
-                    {formik.isSubmitting 
-                        ? 'Procesando...' 
+                    {formik.isSubmitting
+                        ? 'Procesando...'
                         : (isEditMode ? 'Guardar Cambios' : 'Crear Tarea')
                     }
                 </Button>
