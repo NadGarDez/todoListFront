@@ -14,6 +14,7 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import type { TaskInterface } from "../../types";
 import { staticTask } from "../../constants";
+import { useFormik } from 'formik'; // CLAVE 1: Importar useFormik
 
 const PRIMARY_ORANGE = "#FF9900";
 const MAX_TAGS = 3; 
@@ -27,51 +28,40 @@ interface TaskFormProps {
 export const TaskForm = (props: TaskFormProps): JSX.Element => {
     const { task, back, onSubmit } = props;
 
-    const [formData, setFormData] = useState<TaskInterface>(task);
     const [selectedLabel, setSelectedLabel] = useState<string>(''); 
 
-    useEffect(() => {
-        setFormData(task);
-    }, [task]); 
-
+    const formik = useFormik({
+        initialValues: task, 
+        onSubmit: (values) => {
+            console.log(values)
+            onSubmit(values);
+        },
+        enableReinitialize: true, 
+    });
+    
 
     const isEditMode = task.id !== '';
-    const tagLimitReached = formData.labels.length >= MAX_TAGS; 
-
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
-    };
+    const tagLimitReached = formik.values.labels.length >= MAX_TAGS; 
 
     const handleAddLabel = (label: string) => {
         const trimmedLabel = label.trim();
+        const currentLabels = formik.values.labels;
         
-        if (!tagLimitReached && trimmedLabel && !formData.labels.includes(trimmedLabel)) {
-            setFormData(prev => ({
-                ...prev,
-                labels: [...prev.labels, trimmedLabel]
-            }));
+        if (!tagLimitReached && trimmedLabel && !currentLabels.includes(trimmedLabel)) {
+            formik.setFieldValue('labels', [...currentLabels, trimmedLabel]);
         }
         setSelectedLabel('');
     };
 
     const handleDeleteLabel = (labelToDelete: string) => {
-        setFormData(prev => ({
-            ...prev,
-            labels: prev.labels.filter(label => label !== labelToDelete)
-        }));
-    };
-
-    const handleSubmit = () => {
-        if (formData.title.trim()) {
-            onSubmit(formData);
-        }
+        const updatedLabels = formik.values.labels.filter(label => label !== labelToDelete);
+        formik.setFieldValue('labels', updatedLabels);
     };
 
     return (
         <Box
             component="form"
-            onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}
+            onSubmit={formik.handleSubmit}
             sx={{
                 display: 'flex',
                 flexDirection: 'column',
@@ -95,22 +85,24 @@ export const TaskForm = (props: TaskFormProps): JSX.Element => {
                 {isEditMode ? 'Editar Tarea' : 'Crear Nueva Tarea'}
             </Typography>
 
+            {/* Campo Título - Conectado a Formik */}
             <TextField
                 label="Título de la tarea"
-                name="title"
-                value={formData.title}
-                onChange={handleInputChange}
+                // CLAVE 5: Uso de getFieldProps para vincular valor, onChange y onBlur
+                {...formik.getFieldProps('title')} 
+
                 fullWidth
                 required
                 variant="outlined"
                 size="medium"
+                // Si usas validación, aquí irían 'error' e 'helperText' de Formik
             />
 
+            {/* Campo Descripción - Conectado a Formik */}
             <TextField
                 label="Descripción"
-                name="description"
-                value={formData.description}
-                onChange={handleInputChange}
+                // CLAVE 5: Uso de getFieldProps para vincular valor, onChange y onBlur
+                {...formik.getFieldProps('description')}
                 fullWidth
                 multiline
                 rows={4}
@@ -134,7 +126,7 @@ export const TaskForm = (props: TaskFormProps): JSX.Element => {
                     </MenuItem>
                     
                     {staticTask
-                        .filter(label => !formData.labels.includes(label)) 
+                        .filter(label => !formik.values.labels.includes(label)) 
                         .map((label) => (
                         <MenuItem key={label} value={label}>
                             {label}
@@ -142,13 +134,13 @@ export const TaskForm = (props: TaskFormProps): JSX.Element => {
                     ))}
                 </Select>
                 <FormHelperText error={tagLimitReached}>
-                    {formData.labels.length} / {MAX_TAGS} etiquetas seleccionadas.
+                    {formik.values.labels.length} / {MAX_TAGS} etiquetas seleccionadas.
                 </FormHelperText>
             </FormControl>
 
             {/* Lista de Etiquetas Agregadas (Chips) */}
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, minHeight: '30px', mb: 2 }}>
-                {formData.labels.map((label) => (
+                {formik.values.labels.map((label) => (
                     <Chip
                         key={label}
                         label={label}
@@ -164,22 +156,26 @@ export const TaskForm = (props: TaskFormProps): JSX.Element => {
                 ))}
             </Box>
 
-            {/* Botones de Acción (sin cambios) */}
+            {/* Botones de Acción */}
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
                 <Button
                     variant="outlined"
                     onClick={back}
                     sx={{ color: PRIMARY_ORANGE, borderColor: PRIMARY_ORANGE }}
+                    disabled={formik.isSubmitting} 
                 >
                     Cancelar
                 </Button>
                 <Button
                     type="submit"
                     variant="contained"
-                    disabled={!formData.title.trim()}
+                    disabled={!formik.values.title.trim() || formik.isSubmitting} 
                     sx={{ backgroundColor: PRIMARY_ORANGE, '&:hover': { backgroundColor: '#E68A00' } }}
                 >
-                    {isEditMode ? 'Guardar Cambios' : 'Crear Tarea'}
+                    {formik.isSubmitting 
+                        ? 'Procesando...' 
+                        : (isEditMode ? 'Guardar Cambios' : 'Crear Tarea')
+                    }
                 </Button>
             </Box>
         </Box>
