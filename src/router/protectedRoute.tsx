@@ -1,20 +1,60 @@
-import type { JSX } from '@emotion/react/jsx-runtime';
+import type { JSX } from 'react';
 import React from 'react';
 import { useAuth } from 'react-oidc-context';
 import { Navigate } from 'react-router';
+import { Box, Typography, CircularProgress } from '@mui/material';
+import BackgroundLayout from '../components/layout/backgroundLaout';
+import MobileFirstContainer from '../components/layout/mobileFirstContainer';
 
-interface ProtectedRouteProps  {
+const PRIMARY_ORANGE = "#FF9900";
+const COMPLEMENTARY_GREEN = "#00A388";
+interface ProtectedRouteProps {
     children: JSX.Element
 }
 
-const ProtectedRoute = (props:ProtectedRouteProps):JSX.Element => {
+const ProtectedRoute = (props: ProtectedRouteProps): JSX.Element => {
 
-    const {children} = props;
-    const {isAuthenticated, isLoading} = useAuth();
+    const { children } = props;
+    const { isAuthenticated, isLoading } = useAuth();
 
-    if(isLoading) return <p>Cargando</p>
+    if (isLoading) {
+        return (
+            <BackgroundLayout>
+                <MobileFirstContainer>
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            height: '100vh',
+                            textAlign: 'center',
+                            backgroundColor: 'white',
+                            gap: 3,
+                        }}
+                    >
+                        <Typography
+                            variant="h4"
+                            sx={{
+                                fontWeight: 900,
+                                color: COMPLEMENTARY_GREEN,
+                                textTransform: 'uppercase',
+                                marginBottom: 2
+                            }}
+                        >
+                            TodoList
+                        </Typography>
+                        <CircularProgress sx={{ color: PRIMARY_ORANGE }} size={40} />
+                        <Typography variant="body1" color="text.secondary">
+                            Verificando sesión...
+                        </Typography>
+                    </Box>
+                </MobileFirstContainer>
+            </BackgroundLayout>
+        );
+    }
 
-    if(isAuthenticated) return children
+    if (isAuthenticated) return children
 
     return <Navigate to="/login" />
 };
