@@ -5,3 +5,8 @@ export interface TaskInterface {
     description: string;
     done: boolean
 }
+
+export type ApiTask = TaskInterface &  {
+    createdAt: string;
+    updatedAt: string;
+}

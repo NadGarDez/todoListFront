@@ -1,12 +1,5 @@
 import axios, { type AxiosInstance } from 'axios';
-import type { TaskInterface } from '../types';
-
-
-export type ApiTask = TaskInterface &  {
-    createdAt: string;
-    updatedAt: string;
-}
-
+import type { TaskInterface , ApiTask} from '../types';
 
 export interface ToggleTaskPayload {
     taskId: number;
@@ -120,7 +113,7 @@ export async function toggleTask(token: string, taskId: number): Promise<ApiTask
  * @param token El token JWT actual.
  * @param taskId El ID de la tarea a eliminar.
  */
-export async function deleteTask(token: string, taskId: string): Promise<void> {
+export async function deleteTask(token: string, taskId: number): Promise<void> {
     try {
         const apiClient = createApiClient(BASE_URL_LOCAL, token);
         await apiClient.delete<void>(`/${taskId}`);

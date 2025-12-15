@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState, type JSX } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState, type JSX } from "react";
 import BackgroundLayout from "../components/layout/backgroundLaout";
 import MobileFirstContainer from "../components/layout/mobileFirstContainer";
 import DefaultModal from "../components/ui/defaultModal";
@@ -8,10 +8,10 @@ import { CLIENT_ID, COGNITO_DOMAIN, LOGOUT_URL } from "../constants";
 import HomeHeader from "../components/layout/homeHeader";
 import { FloatingAddButton } from "../components/ui/floatingAddButton";
 import TaskList from "../components/ui/TaskList";
-import type { TaskInterface } from "../types";
+import { type ApiTask, type TaskInterface } from "../types";
 import { TaskForm } from "../components/ui/TaskForm";
-import { createTask, deleteTask, updateTask } from "../api";
-
+import { createTask, deleteTask, getTask, getTasks, updateTask } from "../api";
+import { useAuth } from "react-oidc-context";
 
 const sliderConfig: Settings = {
     dots: false,
@@ -22,16 +22,13 @@ const sliderConfig: Settings = {
     arrows: false,
 };
 
-
-
 interface modalState {
     visible: boolean,
     contentName: 'signOut' | 'delete'
 }
 
-
 const MOCK_TASKS: TaskInterface[] = [
-   
+
 ];
 
 const defaultTaskData: TaskInterface = {
@@ -39,7 +36,7 @@ const defaultTaskData: TaskInterface = {
     title: '',
     labels: [],
     description: '',
-    done:false
+    done: false
 }
 
 const Home = (): JSX.Element => {
@@ -49,15 +46,43 @@ const Home = (): JSX.Element => {
 
     const [activeSlideIndex, setActiveSlideIndex] = useState(0);
 
+    const { user } = useAuth()
+
+
+    const [tasks, setTasks] = useState<ApiTask[]>([])
+
     const [modalState, setModalStatus] = useState<modalState>({
         visible: false,
         contentName: 'signOut'
     })
 
-
-
     const token = useMemo(
-        () => localStorage.getItem('authToken') || '',[]
+        () => {
+            return user?.access_token ?? ''
+        },
+        []
+    );
+
+    const requestTasks = useCallback(
+        async () => {
+            try {
+                const tasks = await getTasks(token)
+                setTasks(tasks);
+            } catch (error) {
+                // handle error
+            }
+        },
+        [token, getTask]
+    )
+
+    useEffect(
+        () => {
+            if (activeSlideIndex === 0) {
+                console.log('here')
+                requestTasks()
+            }
+        },
+        [activeSlideIndex]
     )
 
     const signOut = () => {
@@ -113,21 +138,21 @@ const Home = (): JSX.Element => {
     const finaleDelete = async () => {
         await deleteTask(token, activeItem.id)
         setActiveItem(defaultTaskData);
-        toggleVisibility(); 
+        toggleVisibility();
     }
 
 
     const createOrUpdate = async (data: TaskInterface) => {
 
-        if(data.id === 0) {
-            await createTask(token,data);
+        if (data.id === 0) {
+            await createTask(token, data);
         }
 
         else {
-            await updateTask(token,data)
+            await updateTask(token, data)
         }
 
-        back(); 
+        back();
     }
 
     const finalSliderConfig: Settings = {
@@ -151,7 +176,7 @@ const Home = (): JSX.Element => {
                     {/* Índice 0: Lista de Tareas */}
                     <div>
                         <TaskList
-                            tasks={MOCK_TASKS}
+                            tasks={tasks}
                             onPressDelete={onPressDelete}
                             onPressDetail={onPressDetail}
                         />
