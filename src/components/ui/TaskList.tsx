@@ -7,10 +7,11 @@ interface TaskListProps {
     tasks: TaskInterface[];
     onPressDetail: (item: TaskInterface) => void
     onPressDelete: (item: TaskInterface) => void
+    onPressDone: (item: TaskInterface) => void
 }
 
 const TaskList = (props: TaskListProps): JSX.Element => {
-    const { tasks, onPressDelete, onPressDetail } = props;
+    const { tasks, onPressDelete, onPressDetail, onPressDone } = props;
 
     if (tasks.length === 0) {
         return (
@@ -38,6 +39,7 @@ const TaskList = (props: TaskListProps): JSX.Element => {
                     key={`taks_id_${task.id}`}
                     onDelete={onPressDelete}
                     onPressDetail={onPressDetail}
+                    onPressDone={onPressDone}
                 />
             ))}
         </Box>

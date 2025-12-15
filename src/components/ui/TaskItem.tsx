@@ -1,24 +1,34 @@
 import React, { type JSX, useState } from "react";
-import { Box, Typography, IconButton, Menu, MenuItem } from "@mui/material";
+import { Box, Typography, IconButton, Menu, MenuItem, CircularProgress } from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert'; 
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import TaskLabel from "./taskLabel";
-import type { TaskInterface } from "../../types";
+import type { ApiTask, TaskInterface } from "../../types"; // Usaremos ApiTask para el retorno
 
 type TaskItemProps = {
     onDelete: (item: TaskInterface) => void;
     onPressDetail: (item: TaskInterface) => void;
+    onPressDone: (item: TaskInterface) => void; 
 } & TaskInterface
 
 export const TaskItem = (props: TaskItemProps): JSX.Element => {
-    const {  onDelete, onPressDetail, ...item } = props;
+    const { onDelete, onPressDetail, onPressDone, ...item } = props;
 
-    const { title, labels , description} = item;
+    const [isToggling, setIsToggling] = useState(false);
+    
+    const isDisabled = isToggling;
+
+    const { title, labels, description, done } = item;
 
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
 
+
     const handleClickMenu = (event: React.MouseEvent<HTMLElement>) => {
-        setAnchorEl(event.currentTarget);
+        if (!isDisabled) {
+            setAnchorEl(event.currentTarget);
+        }
     };
 
     const handleCloseMenu = () => {
@@ -26,13 +36,32 @@ export const TaskItem = (props: TaskItemProps): JSX.Element => {
     };
 
     const handleDetail = () => {
-        onPressDetail(item);
-        handleCloseMenu();
+        if (!isDisabled) {
+            onPressDetail(item);
+            handleCloseMenu();
+        }
     };
 
     const handleDelete = () => {
-        onDelete(item);
-        handleCloseMenu();
+        if (!isDisabled) {
+            onDelete(item);
+            handleCloseMenu();
+        }
+    };
+    
+    const handleToggleDone = async (e: React.MouseEvent<HTMLElement>) => {
+        e.stopPropagation(); 
+        if (isDisabled) return; 
+
+        setIsToggling(true);
+        try {
+            await onPressDone(item); 
+            
+        } catch (error) {
+            console.error('Error al alternar estado de la tarea (interno):', error);
+        } finally {
+            setIsToggling(false);
+        }
     };
 
     return (
@@ -42,9 +71,9 @@ export const TaskItem = (props: TaskItemProps): JSX.Element => {
                 borderBottom: '1px solid #F5F5F5', 
                 backgroundColor: 'white',
                 '&:hover': {
-                    backgroundColor: '#FAFAFA',
+                    backgroundColor: isDisabled ? 'white' : '#FAFAFA',
                 },
-                cursor: 'pointer',
+                cursor: isDisabled ? 'default' : 'pointer',
                 
                 display: 'flex',
                 flexDirection: 'column',
@@ -56,22 +85,39 @@ export const TaskItem = (props: TaskItemProps): JSX.Element => {
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
-                    
+                    textDecoration: done && !isDisabled ? 'line-through' : 'none', 
+                    color: done && !isDisabled ? 'text.secondary' : 'inherit',
                 }}
             >
+                
+                <IconButton 
+                    onClick={handleToggleDone} 
+                    disabled={isDisabled}
+                    size="small" 
+                    sx={{ p: 0, mr: 1, color: done ? '#00A388' : '#888888' }}
+                >
+                    {isToggling ? (
+                        <CircularProgress size={20} sx={{ color: '#CC5500' }} />
+                    ) : (
+                        done ? <CheckCircleIcon fontSize="small" /> : <RadioButtonUncheckedIcon fontSize="small" />
+                    )}
+                </IconButton>
+
+
                 <Typography
                     variant="subtitle1"
                     component="h3"
-                    onClick={() => onPressDetail(item)} 
+                    onClick={() => onPressDetail(item)}
                     sx={{
                         fontWeight: 600,
                         flexGrow: 1, 
                         marginRight: 1,
-                        color: '#CC5500',
+                        color: done ? 'text.secondary' : '#CC5500',
                         
                         whiteSpace: 'nowrap',
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
+                        textDecoration: done ? 'line-through' : 'none',
                     }}
                 >
                     {title}
@@ -80,6 +126,7 @@ export const TaskItem = (props: TaskItemProps): JSX.Element => {
                 <IconButton 
                     onClick={handleClickMenu}
                     size="small"
+                    disabled={isDisabled}
                     aria-controls={open ? 'task-menu' : undefined}
                     aria-haspopup="true"
                     aria-expanded={open ? 'true' : undefined}
@@ -87,6 +134,7 @@ export const TaskItem = (props: TaskItemProps): JSX.Element => {
                 >
                     <MoreVertIcon fontSize="small" />
                 </IconButton>
+
 
                 <Menu
                     anchorEl={anchorEl}
@@ -96,9 +144,10 @@ export const TaskItem = (props: TaskItemProps): JSX.Element => {
                         'aria-labelledby': 'three-dots-button',
                     }}
                 >
-                    <MenuItem onClick={handleDetail}>Ver Detalle</MenuItem>
+                    <MenuItem onClick={handleDetail} disabled={isDisabled}>Ver Detalle</MenuItem>
                     <MenuItem 
                         onClick={handleDelete}
+                        disabled={isDisabled}
                         sx={{ color: '#D32F2F' }} 
                     >
                         Eliminar

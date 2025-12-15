@@ -9,7 +9,7 @@ import HomeHeader from "../components/layout/homeHeader";
 import { FloatingAddButton } from "../components/ui/floatingAddButton";
 import TaskList from "../components/ui/TaskList";
 import { type ApiTask, type TaskInterface } from "../types";
-import { createTask, deleteTask, getTask, getTasks, updateTask } from "../api";
+import { createTask, deleteTask, getTask, getTasks, markAsComplete, updateTask } from "../api";
 import { useAuth } from "react-oidc-context";
 import { TaskForm } from "../components/ui/TaskForm";
 
@@ -176,6 +176,26 @@ const Home = (): JSX.Element => {
         }
     }
 
+
+    const onPressDone =  async (data: TaskInterface) => {
+        try {
+            await markAsComplete(token, data.id)
+            requestTasks(); 
+        } catch (error) {
+            handleError(error);
+        }
+    }
+
+
+    const clearError = () => {
+        setModalStatus(
+            {
+                contentName: 'signOut',
+                visible: false
+            }
+        )
+    }
+
     const finalSliderConfig: Settings = {
         ...sliderConfig,
         beforeChange(_, nextSlide) {
@@ -197,6 +217,7 @@ const Home = (): JSX.Element => {
                             tasks={tasks}
                             onPressDelete={onPressDelete}
                             onPressDetail={onPressDetail}
+                            onPressDone={onPressDone}
                         />
 
                     </div>
@@ -242,7 +263,7 @@ const Home = (): JSX.Element => {
                             <StandardModalContent
                                 title={`Error`}
                                 subtitle={modalState.error ?? 'Error desconocido de la aplicación.'}
-                                onAction={toggleVisibility}
+                                onAction={clearError}
                                 actionLabel="Aceptar"
                             />
                         )

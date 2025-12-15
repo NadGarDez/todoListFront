@@ -34,7 +34,6 @@ export const TaskForm = (props: TaskFormProps): JSX.Element => {
     const formik = useFormik({
         initialValues: task,
         onSubmit: (values) => {
-            console.log(values)
             onSubmit(values);
         },
         enableReinitialize: true,
