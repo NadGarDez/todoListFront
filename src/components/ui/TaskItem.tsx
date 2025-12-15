@@ -4,7 +4,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import TaskLabel from "./taskLabel";
-import type { ApiTask, TaskInterface } from "../../types"; // Usaremos ApiTask para el retorno
+import type { TaskInterface } from "../../types"; 
 
 type TaskItemProps = {
     onDelete: (item: TaskInterface) => void;

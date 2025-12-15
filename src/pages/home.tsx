@@ -9,9 +9,10 @@ import HomeHeader from "../components/layout/homeHeader";
 import { FloatingAddButton } from "../components/ui/floatingAddButton";
 import TaskList from "../components/ui/TaskList";
 import { type ApiTask, type TaskInterface } from "../types";
-import { createTask, deleteTask, getTask, getTasks, markAsComplete, updateTask } from "../api";
+import { createTask, deleteTask, getTasks, markAsComplete, updateTask } from "../api";
 import { useAuth } from "react-oidc-context";
 import { TaskForm } from "../components/ui/TaskForm";
+import TaskLoadingUI from "../components/ui/taskLoading";
 
 const sliderConfig: Settings = {
     dots: false,
@@ -47,6 +48,8 @@ const Home = (): JSX.Element => {
 
 
     const [tasks, setTasks] = useState<ApiTask[]>([])
+    // 🛠️ ESTADO DE CARGA DE TAREAS
+    const [isLoadingTasks, setIsLoadingTasks] = useState(false);
 
     const [modalState, setModalStatus] = useState<modalState>({
         visible: false,
@@ -75,11 +78,14 @@ const Home = (): JSX.Element => {
 
     const requestTasks = useCallback(
         async () => {
+            setIsLoadingTasks(true); 
             try {
                 const tasks = await getTasks(token)
                 setTasks(tasks);
             } catch (error) {
                 handleError(error) 
+            } finally {
+                setIsLoadingTasks(false);
             }
         },
         [token, handleError] 
@@ -87,11 +93,12 @@ const Home = (): JSX.Element => {
 
     useEffect(
         () => {
-            if (activeSlideIndex === 0) {
+            if (activeSlideIndex === 0 && tasks.length === 0 && !isLoadingTasks) {
                 requestTasks()
+            } else if (activeSlideIndex === 0 && tasks.length > 0) {
             }
         },
-        [activeSlideIndex, requestTasks]
+        [activeSlideIndex, requestTasks, tasks.length, isLoadingTasks]
     )
 
     const signOut = () => {
@@ -213,14 +220,18 @@ const Home = (): JSX.Element => {
 
                 <Slider {...finalSliderConfig} ref={sliderRef}>
                     <div>
-                        <TaskList
-                            tasks={tasks}
-                            onPressDelete={onPressDelete}
-                            onPressDetail={onPressDetail}
-                            onPressDone={onPressDone}
-                        />
-
+                        {isLoadingTasks ? (
+                            <TaskLoadingUI /> 
+                        ) : (
+                            <TaskList
+                                tasks={tasks}
+                                onPressDelete={onPressDelete}
+                                onPressDetail={onPressDetail}
+                                onPressDone={onPressDone} 
+                            />
+                        )}
                     </div>
+                    
                     <div>
                         <TaskForm
                             task={activeItem}
@@ -230,7 +241,7 @@ const Home = (): JSX.Element => {
                     </div>
                 </Slider>
 
-                {activeSlideIndex === 0 && (
+                {activeSlideIndex === 0 && !isLoadingTasks && ( 
                     <FloatingAddButton
                         onPressAdd={onPressAdd}
                     />
