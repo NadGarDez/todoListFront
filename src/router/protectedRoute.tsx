@@ -21,7 +21,6 @@ const ProtectedRoute = (props: ProtectedRouteProps): JSX.Element => {
     useEffect(
         () => {
             if(user?.access_token) {
-                console.log(user.access_token)
                 localStorage.setItem('authToken', user.access_token);
                 
             } else {

@@ -61,6 +61,8 @@ export async function getTasks(token: string): Promise<ApiTask[]> {
  */
 export async function createTask(token: string, payload: TaskInterface): Promise<ApiTask> {
     try {
+
+        console.log('payload', payload)
         const apiClient = createApiClient(BASE_URL_LOCAL, token);
         const response = await apiClient.post<ApiTask>('/', payload);
         return response.data;
@@ -75,11 +77,11 @@ export async function createTask(token: string, payload: TaskInterface): Promise
  * @param token El token JWT actual.
  * @param payload El cuerpo de la solicitud con los datos actualizados.
  */
-export async function updateTask(token: string, payload: UpdateTaskPayload): Promise<ApiTask> {
+export async function updateTask(token: string, payload: ApiTask): Promise<ApiTask> {
     try {
         const apiClient = createApiClient(BASE_URL_LOCAL, token);
         // Asumiendo que el endpoint PUT en local usa la ruta base y el ID está en el payload
-        const response = await apiClient.put<ApiTask>('/', payload); 
+        const response = await apiClient.put<ApiTask>(`/${payload.id}`, payload); 
         return response.data;
     } catch (error) {
         console.error('Error al editar tarea (Local):', error);

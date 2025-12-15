@@ -27,9 +27,6 @@ interface modalState {
     contentName: 'signOut' | 'delete'
 }
 
-const MOCK_TASKS: TaskInterface[] = [
-
-];
 
 const defaultTaskData: TaskInterface = {
     id: 0,
@@ -78,7 +75,6 @@ const Home = (): JSX.Element => {
     useEffect(
         () => {
             if (activeSlideIndex === 0) {
-                console.log('here')
                 requestTasks()
             }
         },
@@ -142,14 +138,14 @@ const Home = (): JSX.Element => {
     }
 
 
-    const createOrUpdate = async (data: TaskInterface) => {
+    const createOrUpdate = async (data: TaskInterface | ApiTask) => {
 
         if (data.id === 0) {
-            await createTask(token, data);
+            await createTask(token, data as TaskInterface);
         }
 
         else {
-            await updateTask(token, data)
+            await updateTask(token, data as ApiTask)
         }
 
         back();

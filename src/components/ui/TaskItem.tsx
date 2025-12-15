@@ -12,7 +12,7 @@ type TaskItemProps = {
 export const TaskItem = (props: TaskItemProps): JSX.Element => {
     const {  onDelete, onPressDetail, ...item } = props;
 
-    const { title, labels, description} = item;
+    const { title, labels , description} = item;
 
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
