@@ -1,5 +1,5 @@
 import type { JSX } from 'react';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useAuth } from 'react-oidc-context';
 import { Navigate } from 'react-router';
 import { Box, Typography, CircularProgress } from '@mui/material';
@@ -15,7 +15,21 @@ interface ProtectedRouteProps {
 const ProtectedRoute = (props: ProtectedRouteProps): JSX.Element => {
 
     const { children } = props;
-    const { isAuthenticated, isLoading } = useAuth();
+    const { isAuthenticated, isLoading , user} = useAuth();
+
+
+    useEffect(
+        () => {
+            if(user?.access_token) {
+                console.log(user.access_token)
+                localStorage.setItem('authToken', user.access_token);
+                
+            } else {
+                localStorage.removeItem('authToken');
+            }
+        },
+        [user] 
+    )
 
     if (isLoading) {
         return (

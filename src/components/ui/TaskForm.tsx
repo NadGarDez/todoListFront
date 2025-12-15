@@ -45,7 +45,7 @@ export const TaskForm = (props: TaskFormProps): JSX.Element => {
         formik.setFieldTouched('labels', true, true);
     }
 
-    const isEditMode = task.id !== '';
+    const isEditMode = task.id !== 0;
     const tagLimitReached = formik.values.labels.length >= MAX_TAGS;
 
     const handleAddLabel = (label: string) => {

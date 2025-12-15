@@ -1,4 +1,4 @@
-import React, { useRef, useState, type JSX } from "react";
+import React, { useMemo, useRef, useState, type JSX } from "react";
 import BackgroundLayout from "../components/layout/backgroundLaout";
 import MobileFirstContainer from "../components/layout/mobileFirstContainer";
 import DefaultModal from "../components/ui/defaultModal";
@@ -10,6 +10,7 @@ import { FloatingAddButton } from "../components/ui/floatingAddButton";
 import TaskList from "../components/ui/TaskList";
 import type { TaskInterface } from "../types";
 import { TaskForm } from "../components/ui/TaskForm";
+import { createTask, deleteTask, updateTask } from "../api";
 
 
 const sliderConfig: Settings = {
@@ -34,7 +35,7 @@ const MOCK_TASKS: TaskInterface[] = [
 ];
 
 const defaultTaskData: TaskInterface = {
-    id: '',
+    id: 0,
     title: '',
     labels: [],
     description: '',
@@ -52,6 +53,12 @@ const Home = (): JSX.Element => {
         visible: false,
         contentName: 'signOut'
     })
+
+
+
+    const token = useMemo(
+        () => localStorage.getItem('authToken') || '',[]
+    )
 
     const signOut = () => {
         window.location.href = `${COGNITO_DOMAIN}/logout?client_id=${CLIENT_ID}&logout_uri=${encodeURIComponent(LOGOUT_URL)}`;
@@ -103,13 +110,23 @@ const Home = (): JSX.Element => {
     }
 
 
-    const finaleDelete = () => {
+    const finaleDelete = async () => {
+        await deleteTask(token, activeItem.id)
         setActiveItem(defaultTaskData);
         toggleVisibility(); 
     }
 
 
-    const createOrUpdate = (data: TaskInterface) => {
+    const createOrUpdate = async (data: TaskInterface) => {
+
+        if(data.id === 0) {
+            await createTask(token,data);
+        }
+
+        else {
+            await updateTask(token,data)
+        }
+
         back(); 
     }
 
